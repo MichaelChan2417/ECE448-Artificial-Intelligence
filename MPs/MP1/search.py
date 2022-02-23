@@ -14,6 +14,8 @@ within this file -- the unrevised staff files will be used for all other
 files and classes when code is run, so be careful to not modify anything else.
 """
 
+import queue
+
 
 # Search should return the path and the number of states explored.
 # The path should be a list of tuples in the form (row, col) that correspond
@@ -32,15 +34,97 @@ def search(maze, searchMethod):
 
 
 def bfs(maze):
-    # TODO: Write your code here
-    # return path, num_states_explored
-    return [], 0
+    # return path, num_states_explored; output init
+    num_states = 0
+    path = []
+    # receive the parameters from maze
+    Rows = maze.getDimensions()[0]
+    Columns = maze.getDimensions()[1]
+
+    # use to store whether this point have been visited
+    visit = [[0 for i in range(Columns)] for j in range(Rows)]
+    # use to record the back trace
+    father = [[0 for i in range(Columns)] for j in range(Rows)]
+
+    Start = maze.getStart()  # the coordinate to start
+    End = maze.getObjectives()[0]  # we just need the first one to get
+    q = queue.Queue()  # to store the traverse processes
+    father[Start[0]][Start[1]] = Start  # set start's self to be its father
+    q.put(Start)
+
+    while not q.empty():
+        tempnode = q.get()
+        # if we find the final output; break and ready to insert
+        if tempnode == End:
+            break
+        # it's not end; then set it visited and find its valid neighbor
+        visit[tempnode[0]][tempnode[1]] = 1
+        valid_neighbors = maze.getNeighbors(tempnode[0], tempnode[1])
+        for pos_nodes in valid_neighbors:
+            # if the valid neighbor has been visited; just skip
+            if visit[pos_nodes[0]][pos_nodes[1]]:
+                continue
+            # now it has been visited
+            visit[pos_nodes[0]][pos_nodes[1]] = 1
+            # set its father to tempnode
+            father[pos_nodes[0]][pos_nodes[1]] = tempnode
+            q.put(pos_nodes)
+
+    # now the tempnode reach to End; we need back trace and push it into a stack for
+    # path print; so count the num_states
+    while tempnode != Start:
+        path.append(tempnode)
+        next_node = father[tempnode[0]][tempnode[1]]
+        num_states += 1
+        tempnode = next_node
+    path.append(Start)
+    path.reverse()
+
+    return path, num_states
 
 
 def dfs(maze):
-    # TODO: Write your code here
-    # return path, num_states_explored
-    return [], 0
+    num_states = 0
+    path = []
+    # receive the parameters from maze
+    Rows = maze.getDimensions()[0]
+    Columns = maze.getDimensions()[1]
+
+    # use to store whether this point have been visited
+    visit = [[0 for i in range(Columns)] for j in range(Rows)]
+
+    Start = maze.getStart()  # the coordinate to start
+    End = maze.getObjectives()[0]  # we just need the first one to get
+
+    tempnode = Start
+    flag = 0
+    def dfs_handler(tempnode):
+        nonlocal visit
+        nonlocal path
+        nonlocal maze
+        nonlocal flag
+        if tempnode == End:
+            flag = 1
+            return
+
+        else:
+            # it has been visited
+            visit[tempnode[0]][tempnode[1]] = 1
+            path.append(tempnode)
+            # find its possible neighbors
+            valid_neighbors = maze.getNeighbors(tempnode[0], tempnode[1])
+            for pos_node in valid_neighbors:
+                if visit[pos_node[0]][pos_node[1]] == 0:
+                    if flag == 0:
+                        dfs_handler(pos_node)
+            if flag==0:
+                visit[tempnode[0]][tempnode[1]] = 0
+                path.pop()
+
+    dfs_handler(tempnode)
+    print(visit)
+    num_states = len(path)
+    return path, num_states
 
 
 def greedy(maze):
