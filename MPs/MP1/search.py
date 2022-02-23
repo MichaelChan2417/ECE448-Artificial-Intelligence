@@ -15,6 +15,7 @@ files and classes when code is run, so be careful to not modify anything else.
 """
 
 import queue
+import heapq
 
 
 # Search should return the path and the number of states explored.
@@ -95,7 +96,6 @@ def dfs(maze):
 
     Start = maze.getStart()  # the coordinate to start
     End = maze.getObjectives()[0]  # we just need the first one to get
-
     tempnode = Start
     flag = 0
     def dfs_handler(tempnode):
@@ -124,13 +124,66 @@ def dfs(maze):
     dfs_handler(tempnode)
     print(visit)
     num_states = len(path)
+    path.append(End)
     return path, num_states
 
 
+# The support function used in greedy's heapq for the priority decision of distance
+def distGet(End, curnode):
+    dist = abs(End[0]-curnode[0]) + abs(End[1]-curnode[1])
+    return dist
+
 def greedy(maze):
-    # TODO: Write your code here
-    # return path, num_states_explored
-    return [], 0
+    # return path, num_states_explored; output init
+    num_states = 0
+    path = []
+    # receive the parameters from maze
+    Rows = maze.getDimensions()[0]
+    Columns = maze.getDimensions()[1]
+
+    # use to store whether this point have been visited
+    visit = [[0 for i in range(Columns)] for j in range(Rows)]
+    # use to record the back trace
+    father = [[0 for i in range(Columns)] for j in range(Rows)]
+
+    Start = maze.getStart()  # the coordinate to start
+    End = maze.getObjectives()[0]  # we just need the first one to get
+
+    father[Start[0]][Start[1]] = Start  # set start's self to be its father
+    prio_q = []
+    heapq.heappush(prio_q, (distGet(End,Start), Start))
+
+    while len(prio_q) != 0:
+        ele = heapq.heappop(prio_q)
+        tempnode = ele[1]
+        print(tempnode)
+        # if we find the final output; break and ready to insert
+        if tempnode == End:
+            break
+        # it's not end; then set it visited and find its valid neighbor
+        visit[tempnode[0]][tempnode[1]] = 1
+        valid_neighbors = maze.getNeighbors(tempnode[0], tempnode[1])
+        for pos_nodes in valid_neighbors:
+            # if the valid neighbor has been visited; just skip
+            if visit[pos_nodes[0]][pos_nodes[1]]:
+                continue
+            # now it has been visited
+            visit[pos_nodes[0]][pos_nodes[1]] = 1
+            # set its father to tempnode
+            father[pos_nodes[0]][pos_nodes[1]] = tempnode
+            heapq.heappush(prio_q, (distGet(End,pos_nodes), pos_nodes))
+
+    # now the tempnode reach to End; we need back trace and push it into a stack for
+    # path print; so count the num_states
+    while tempnode != Start:
+        path.append(tempnode)
+        next_node = father[tempnode[0]][tempnode[1]]
+        num_states += 1
+        tempnode = next_node
+    path.append(Start)
+    path.reverse()
+
+    return path, num_states
 
 
 def astar(maze):
