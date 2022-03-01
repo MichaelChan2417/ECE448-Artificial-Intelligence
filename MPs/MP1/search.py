@@ -16,7 +16,7 @@ files and classes when code is run, so be careful to not modify anything else.
 
 import queue
 import heapq
-
+import queue as q
 
 # Search should return the path and the number of states explored.
 # The path should be a list of tuples in the form (row, col) that correspond
@@ -132,7 +132,15 @@ def dfs(maze):
 def distGet(End, curnode):
     dist = abs(End[0]-curnode[0]) + abs(End[1]-curnode[1])
     return dist
-
+def manhattan_min(objectives,node):
+    minn=distGet(objectives[0],node)
+    for i in objectives[1:]:
+        new_dist=distGet(i,node)
+        if minn>new_dist:
+            minn=new_dist
+            
+    return minn
+        
 def greedy(maze):
     # return path, num_states_explored; output init
     num_states = 0
@@ -186,7 +194,63 @@ def greedy(maze):
     return path, num_states
 
 
+    
 def astar(maze):
     # TODO: Write your code here
     # return path, num_states_explored
-    return [], 0
+    num_states=0
+    path=[]
+    # receive the parameters from maze
+    Rows = maze.getDimensions()[0]
+    Columns = maze.getDimensions()[1]
+    # use to store whether this point have been visited
+    visit = [[0 for i in range(Columns)] for j in range(Rows)]
+    # use to record the back trace
+    father = [[0 for i in range(Columns)] for j in range(Rows)]
+    path_len= [[0 for i in range(Columns)] for j in range(Rows)]
+    Start = maze.getStart()  # the coordinate to start
+    objectives = maze.getObjectives()  # find all objectives
+    
+    prio_q=q.PriorityQueue()
+    
+    father[Start[0]][Start[1]] = Start  # set start's self to be its father
+    print(manhattan_min(objectives,Start))
+    prio_q.put((manhattan_min(objectives,Start),Start))
+    
+    while prio_q :
+        ele = prio_q.get()
+        
+        tempnode=ele[1]
+        
+        print("tempnode: ")
+        print(tempnode)
+        if tempnode in objectives:
+            break
+        # it's not end; then set it visited and find its valid neighbor
+        
+        visit[tempnode[0]][tempnode[1]] = 1
+        valid_neighbors = maze.getNeighbors(tempnode[0], tempnode[1])
+        for pos_nodes in valid_neighbors:
+            print(pos_nodes,path_len[tempnode[0]][tempnode[1]]+1)
+            if visit[pos_nodes[0]][pos_nodes[1]]:
+                continue
+            # now it has been visited
+            visit[pos_nodes[0]][pos_nodes[1]] = 1
+            # set its father to tempnode
+            path_len[pos_nodes[0]][pos_nodes[1]]=path_len[tempnode[0]][tempnode[1]]+1
+            father[pos_nodes[0]][pos_nodes[1]] = tempnode
+            prio_q.put((manhattan_min(objectives,Start)+path_len[pos_nodes[0]][pos_nodes[1]],pos_nodes))
+    print("here")
+    # now the tempnode reach to End; we need back trace and push it into a stack for
+    # path print; so count the num_states
+    while tempnode != Start:
+        path.append(tempnode)
+        next_node = father[tempnode[0]][tempnode[1]]
+        num_states += 1
+        tempnode = next_node
+    path.append(Start)
+    path.reverse()
+    return path, num_states
+    
+    
+    
