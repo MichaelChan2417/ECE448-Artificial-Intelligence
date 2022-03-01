@@ -214,7 +214,7 @@ def astar(maze):
     prio_q=q.PriorityQueue()
     
     father[Start[0]][Start[1]] = Start  # set start's self to be its father
-    print(manhattan_min(objectives,Start))
+    # print(manhattan_min(objectives,Start))
     prio_q.put((manhattan_min(objectives,Start),Start))
     
     while prio_q :
@@ -222,8 +222,8 @@ def astar(maze):
         
         tempnode=ele[1]
         
-        print("tempnode: ")
-        print(tempnode)
+        # print("tempnode: ")
+        # print(tempnode)
         if tempnode in objectives:
             break
         # it's not end; then set it visited and find its valid neighbor
@@ -240,7 +240,7 @@ def astar(maze):
             path_len[pos_nodes[0]][pos_nodes[1]]=path_len[tempnode[0]][tempnode[1]]+1
             father[pos_nodes[0]][pos_nodes[1]] = tempnode
             prio_q.put((manhattan_min(objectives,Start)+path_len[pos_nodes[0]][pos_nodes[1]],pos_nodes))
-    print("here")
+    # print("here")
     # now the tempnode reach to End; we need back trace and push it into a stack for
     # path print; so count the num_states
     while tempnode != Start:
@@ -251,6 +251,9 @@ def astar(maze):
     path.append(Start)
     path.reverse()
     return path, num_states
+
+def astr_multi(maze):
+    
     
     
     
