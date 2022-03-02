@@ -132,12 +132,14 @@ def dfs(maze):
 def distGet(End, curnode):
     dist = abs(End[0]-curnode[0]) + abs(End[1]-curnode[1])
     return dist
-def manhattan_min(objectives,node):
-    minn=distGet(objectives[0],node)
+
+# The function to find the closest object in maze to the node.
+def manhattan_min(objectives, node):
+    minn = distGet(objectives[0], node)
     for i in objectives[1:]:
-        new_dist=distGet(i,node)
-        if minn>new_dist:
-            minn=new_dist
+        new_dist = distGet(i, node)
+        if minn > new_dist:
+            minn = new_dist
             
     return minn
         
@@ -164,7 +166,6 @@ def greedy(maze):
     while len(prio_q) != 0:
         ele = heapq.heappop(prio_q)
         tempnode = ele[1]
-        print(tempnode)
         # if we find the final output; break and ready to insert
         if tempnode == End:
             break
@@ -217,10 +218,10 @@ def astar(maze):
     # print(manhattan_min(objectives,Start))
     prio_q.put((manhattan_min(objectives,Start),Start))
     
-    while prio_q :
+    while prio_q:
         ele = prio_q.get()
         
-        tempnode=ele[1]
+        tempnode = ele[1]
         
         # print("tempnode: ")
         # print(tempnode)
@@ -231,15 +232,15 @@ def astar(maze):
         visit[tempnode[0]][tempnode[1]] = 1
         valid_neighbors = maze.getNeighbors(tempnode[0], tempnode[1])
         for pos_nodes in valid_neighbors:
-            print(pos_nodes,path_len[tempnode[0]][tempnode[1]]+1)
+            # print(pos_nodes,path_len[tempnode[0]][tempnode[1]]+1)
             if visit[pos_nodes[0]][pos_nodes[1]]:
                 continue
             # now it has been visited
             visit[pos_nodes[0]][pos_nodes[1]] = 1
             # set its father to tempnode
-            path_len[pos_nodes[0]][pos_nodes[1]]=path_len[tempnode[0]][tempnode[1]]+1
+            path_len[pos_nodes[0]][pos_nodes[1]] = path_len[tempnode[0]][tempnode[1]] + 1
             father[pos_nodes[0]][pos_nodes[1]] = tempnode
-            prio_q.put((manhattan_min(objectives,Start)+path_len[pos_nodes[0]][pos_nodes[1]],pos_nodes))
+            prio_q.put((manhattan_min(objectives, pos_nodes)+path_len[pos_nodes[0]][pos_nodes[1]], pos_nodes))
     # print("here")
     # now the tempnode reach to End; we need back trace and push it into a stack for
     # path print; so count the num_states
@@ -252,8 +253,7 @@ def astar(maze):
     path.reverse()
     return path, num_states
 
-def astr_multi(maze):
-    
-    
-    
+# def astr_multi(maze):
+
+
     
