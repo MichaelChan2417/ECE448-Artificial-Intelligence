@@ -54,14 +54,17 @@ def bfs(maze):
     q = queue.Queue()  # to store the traverse processes
     father[Start[0]][Start[1]] = Start  # set start's self to be its father
     q.put(Start)
+    
 
     while not q.empty():
         tempnode = q.get()
+        num_states +=1
         # if we find the final output; break and ready to insert
         if tempnode == End:
             break
         # it's not end; then set it visited and find its valid neighbor
         visit[tempnode[0]][tempnode[1]] = 1
+        
         valid_neighbors = maze.getNeighbors(tempnode[0], tempnode[1])
         for pos_nodes in valid_neighbors:
             # if the valid neighbor has been visited; just skip
@@ -72,13 +75,14 @@ def bfs(maze):
             # set its father to tempnode
             father[pos_nodes[0]][pos_nodes[1]] = tempnode
             q.put(pos_nodes)
+           
 
     # now the tempnode reach to End; we need back trace and push it into a stack for
     # path print; so count the num_states
     while tempnode != Start:
         path.append(tempnode)
         next_node = father[tempnode[0]][tempnode[1]]
-        num_states += 1
+        # num_states += 1
         tempnode = next_node
     path.append(Start)
     path.reverse()
@@ -106,6 +110,7 @@ def dfs(maze):
         nonlocal path
         nonlocal maze
         nonlocal flag
+        nonlocal num_states
         if tempnode == End:
             flag = 1
             return
@@ -114,6 +119,7 @@ def dfs(maze):
             # it has been visited
             visit[tempnode[0]][tempnode[1]] = 1
             path.append(tempnode)
+            num_states +=1
             # find its possible neighbors
             valid_neighbors = maze.getNeighbors(tempnode[0], tempnode[1])
             for pos_node in valid_neighbors:
@@ -126,7 +132,7 @@ def dfs(maze):
 
     dfs_handler(tempnode)
     print(visit)
-    num_states = len(path)
+    # num_states = len(path)
     path.append(End)
     return path, num_states
 
@@ -171,6 +177,8 @@ def greedy(maze):
     while len(prio_q) != 0:
         ele = heapq.heappop(prio_q)
         tempnode = ele[1]
+        num_states += 1
+
         # if we find the final output; break and ready to insert
         if tempnode == End:
             break
@@ -192,7 +200,7 @@ def greedy(maze):
     while tempnode != Start:
         path.append(tempnode)
         next_node = father[tempnode[0]][tempnode[1]]
-        num_states += 1
+        # num_states += 1
         tempnode = next_node
     path.append(Start)
     path.reverse()
