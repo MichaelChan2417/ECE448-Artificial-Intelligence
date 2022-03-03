@@ -224,7 +224,7 @@ def astar(maze):
         ele = prio_q.get()
 
         tempnode = ele[1]
-
+        num_states += 1
         # print("tempnode: ")
         # print(tempnode)
         if tempnode in objectives:
@@ -249,7 +249,6 @@ def astar(maze):
     while tempnode != Start:
         path.append(tempnode)
         next_node = father[tempnode[0]][tempnode[1]]
-        num_states += 1
         tempnode = next_node
     path.append(Start)
     path.reverse()
@@ -336,6 +335,7 @@ def astar_multi(maze):
         while prio_q:
             ele = prio_q.get()
             tempnode = ele[1]
+            num_states += 1
             # now we find the final EP
             if tempnode == EP:
                 break
@@ -357,7 +357,6 @@ def astar_multi(maze):
         while tempnode != SP:
             path.append(tempnode)
             next_node = father[tempnode[0]][tempnode[1]]
-            num_states += 1
             tempnode = next_node
         path.append(SP)
         path.reverse()
