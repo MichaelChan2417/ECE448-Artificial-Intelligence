@@ -158,6 +158,7 @@ def greedy(maze):
     # return path, num_states_explored; output init
     num_states = 0
     path = []
+    heapq.heapify(path)
     # receive the parameters from maze
     Rows = maze.getDimensions()[0]
     Columns = maze.getDimensions()[1]
@@ -193,6 +194,7 @@ def greedy(maze):
             visit[pos_nodes[0]][pos_nodes[1]] = 1
             # set its father to tempnode
             father[pos_nodes[0]][pos_nodes[1]] = tempnode
+            
             heapq.heappush(prio_q, (distGet(End, pos_nodes), pos_nodes))
 
     # now the tempnode reach to End; we need back trace and push it into a stack for
@@ -328,8 +330,9 @@ def astar_multi(maze):
 
     # support function in astar_multi to find the minimum path between SP and EP, added to the path
     def Path_Add(SP, EP):
+        num_state=0
         path = []
-        num_states = 0
+       
         # use to store whether this point have been visited
         visit = [[0 for i in range(Columns)] for j in range(Rows)]
         # use to record the back trace
@@ -343,7 +346,7 @@ def astar_multi(maze):
         while prio_q:
             ele = prio_q.get()
             tempnode = ele[1]
-            num_states += 1
+            num_state += 1
             # now we find the final EP
             if tempnode == EP:
                 break
@@ -368,7 +371,7 @@ def astar_multi(maze):
             tempnode = next_node
         path.append(SP)
         path.reverse()
-        return path, num_states
+        return path, num_state
 
     # first add the path from start to nearest obj
     temp_path, temp_num_states = Path_Add(Start_Point, Objectives[index])
