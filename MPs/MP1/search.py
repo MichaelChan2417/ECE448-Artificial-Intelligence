@@ -127,7 +127,7 @@ def dfs(maze):
                     if flag == 0:
                         dfs_handler(pos_node)
             if flag == 0:
-                visit[tempnode[0]][tempnode[1]] = 0
+                
                 path.pop()
 
     dfs_handler(tempnode)
