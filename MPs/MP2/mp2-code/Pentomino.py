@@ -4,7 +4,8 @@
 import numpy as np
 import instances
 from solve import solve
-    
+
+
 def get_pent_idx(pent):
     """
     Returns the index of a pentomino.
@@ -20,7 +21,8 @@ def get_pent_idx(pent):
     if pidx == 0:
         return -1
     return pidx - 1
-        
+
+
 def is_pentomino(pent, pents):
     """
     Checks if a pentomino pent is part of pents
@@ -39,7 +41,8 @@ def is_pentomino(pent, pents):
                 return True
             p = np.rot90(p)
     return False
-                        
+
+
 def add_pentomino(board, pent, coord, check_pent=False, valid_pents=None):
     """
     Adds a pentomino pent to the board. The pentomino will be placed such that
@@ -58,10 +61,12 @@ def add_pentomino(board, pent, coord, check_pent=False, valid_pents=None):
                 else:
                     board[coord[0]+row][coord[1]+col] = pent[row][col]
     return True
-    
+
+
 def remove_pentomino(board, pent_idx):
     board[board==pent_idx+1] = 0
-        
+
+
 def check_correctness(sol_list, board, pents):
     """
     Sol is a list of pentominos (possibly rotated) and their upper left coordinate
