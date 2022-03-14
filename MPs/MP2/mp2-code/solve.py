@@ -19,6 +19,26 @@ def solve(board, pents):
     -You may assume there will always be a solution.
     """
 
+    temp_board = board
+    for i in range(len(temp_board)):
+        for j in range(len(temp_board[0])):
+            if temp_board[i, j] == 1:
+                temp_board[i, j] = 0
+            else:
+                temp_board[i, j] = 1
+    extended_board = np.pad(temp_board, ((2, 2), (2, 2)), 'constant', constant_values=(1, 1))
+    global solveALL
+    solveALL = False
+
+    for idx in range(len(pents), 0, -1):
+        tile_rec(pents, extended_board, idx)
+        if solveALL:
+            break
+
+    new_b = extended_board[2:-2, 2:-2]
+    print(new_b)
+    return new_b
+
 
 def aera_expand(b, i, j, c):
     if b[i, j] != 0:
@@ -55,7 +75,6 @@ def tile_rec(pet, board, c):
     if solveALL:
         print("SOLVE ALL")
         print()
-        print(board[2:-2, 2:-2])
         return
 
     # the core part inside, left the surrounding 2 levels
@@ -104,7 +123,6 @@ def tile_rec(pet, board, c):
                 board[ioff - hw_i:ioff + hw_i + 1, joff - hw_j:joff + hw_j + 1][flag] = piece_idx
 
                 if valid_place(board):
-                    print(board[2:-2, 2:-2])
                     for pos_c in range(len(pet), 0, -1):
                         if solveALL:
                             return
@@ -119,17 +137,7 @@ def tile_rec(pet, board, c):
         piece[0] = np.flip(piece[0], axis=1)
     return
 
+test_board = instances.board_6x10
+pent = instances.pentominos
 
-rows = 5
-columns = 12
-board = np.zeros((rows + 4, columns + 4))
-board[:, [0, 1, -2, -1]] = 1
-board[[0, 1, -2, -1], :] = 1
-
-petno = instances.pentominos
-solveALL = False
-
-for idx in range(len(petno), 0, -1):
-    tile_rec(petno, board, idx)
-    if solveALL:
-        break
+solve(test_board, pent)
