@@ -305,7 +305,16 @@ class ultimateTicTacToe:
                         on the board.
         """
         # YOUR CODE HERE
-        movesLeft = True
+        movesLeft = False
+
+        for i in range(9):
+            for j in range(9):
+                if self.board[i][j] == '_':
+                    movesLeft = True
+                    break
+            if movesLeft:
+                break
+
         return movesLeft
 
     def checkWinner(self):
@@ -319,7 +328,17 @@ class ultimateTicTacToe:
         """
         # YOUR CODE HERE
         winner = 0
-        return 0
+
+        for i in range(len(self.globalIdx)):
+            temp_grade = self.evaluatePredifined(1)
+            if temp_grade == 10000:
+                return 1
+
+            temp_grade = self.evaluatePredifined(0)
+            if temp_grade == 10000:
+                return -1
+
+        return winner
 
     def alphabeta(self, depth, currBoardIdx, alpha, beta, isMax):
         """
