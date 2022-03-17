@@ -354,7 +354,44 @@ class ultimateTicTacToe:
         bestValue(float):the bestValue that current player may have
         """
         # YOUR CODE HERE
-        bestValue = 0.0
+        self.expandedNodes += 1
+        if depth == self.maxDepth:
+            return self.evaluatePredifined(not isMax)
+        a,b=self.globalIdx[currBoardIdx]
+        bestValue=-self.winnerMaxUtility
+        if isMax:
+            
+            for i in range(3):
+                for j in range(3):
+                    if self.board[a+i][b+j] != '_':
+                        continue
+                    self.board[a+i][b+j] =self.maxPlayer
+                    
+                    bestValue=max(bestValue,self.alphabeta(depth+1, 3*j+i, alpha, beta, not isMax),alpha,beta)
+                    self.board[a+i][b+j] ='_'
+                    if  bestValue>= beta:
+                        return bestValue
+                    alpha=max(alpha,bestValue)
+            # return bestValue
+            
+        else:
+            for i in range(3):
+                for j in range(3):
+                    if self.board[a+i][b+j] != '_':
+                        continue
+                    self.board[a+i][b+j] =self.minPlayer
+                    
+                    bestValue=min(bestValue,self.alphabeta(depth+1, 3*j+i, alpha, beta, not isMax),alpha,beta)
+                    self.board[a+i][b+j] ='_'
+                    if  bestValue<= alpha:
+                        return bestValue
+                    beta=min(beta,bestValue)
+            # return bestValue
+            
+        
+            
+        
+            
         return bestValue
 
     def minimax(self, depth, currBoardIdx, isMax):
