@@ -354,7 +354,7 @@ class ultimateTicTacToe:
         bestValue(float):the bestValue that current player may have
         """
         # YOUR CODE HERE
-        self.expandedNodes += 1
+        
         if depth == self.maxDepth:
             return self.evaluatePredifined(not isMax)
         a,b=self.globalIdx[currBoardIdx]
@@ -388,9 +388,6 @@ class ultimateTicTacToe:
                     beta=min(beta,bestValue)
             # return bestValue
             
-        
-            
-        
             
         return bestValue
 
@@ -408,7 +405,28 @@ class ultimateTicTacToe:
         bestValue(float):the bestValue that current player may have
         """
         # YOUR CODE HERE
-        bestValue = 0.0
+        if depth == self.maxDepth:
+            return self.evaluatePredifined(not isMax)
+        a,b=self.globalIdx[currBoardIdx]
+        bestValue=-self.winnerMaxUtility
+        if isMax:
+            for i in range(3):
+                for j in range(3):
+                    if self.board[a+i][b+j] != '_':
+                        continue
+                    self.board[a+i][b+j] =self.maxPlayer
+                    bestValue=max(bestValue,self.minimax(depth+1, 3*j+i, not isMax))
+                    self.board[a+i][b+j] ='_'
+        else:
+            for i in range(3):
+                    for j in range(3):
+                        if self.board[a+i][b+j] != '_':
+                            continue
+                        self.board[a+i][b+j] =self.minPlayer
+                        bestValue=min(bestValue,self.minimax(depth+1, 3*j+i, not isMax))
+                        self.board[a+i][b+j] ='_'
+            
+                    
         return bestValue
 
     def playGamePredifinedAgent(self, maxFirst, isMinimaxOffensive, isMinimaxDefensive):
