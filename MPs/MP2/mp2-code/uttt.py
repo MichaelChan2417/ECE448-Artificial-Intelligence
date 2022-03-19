@@ -354,7 +354,7 @@ class ultimateTicTacToe:
         bestValue(float):the bestValue that current player may have
         """
         # YOUR CODE HERE
-        
+        self.expandedNodes+=1
         if depth == self.maxDepth:
             return self.evaluatePredifined(not isMax)
         a,b=self.globalIdx[currBoardIdx]
@@ -404,6 +404,7 @@ class ultimateTicTacToe:
         output:
         bestValue(float):the bestValue that current player may have
         """
+        self.expandedNodes+=1
         # YOUR CODE HERE
         if depth == self.maxDepth:
             return self.evaluatePredifined(not isMax)
@@ -447,10 +448,66 @@ class ultimateTicTacToe:
         winner(int): 1 for maxPlayer is the winner, -1 for minPlayer is the winner, and 0 for tie.
         """
         # YOUR CODE HERE
+        
         bestMove = []
         bestValue = []
         gameBoards = []
+        currIdx=self.startBoardIdx
+        
         winner = 0
+        
+        self.currPlayer=maxFirst
+        beta=self.winnerMinUtility
+        alpha=self.winnerMaxUtility
+        
+        
+        while(self.checkMovesLeft()==True)and (self.checkWinner()==0):
+            a,b=self.globalIdx[currIdx]
+            if self.currPlayer:
+                bestvalue=self.winnerMinUtility
+            else:
+                bestvalue=self.winnerMaxUtility
+            for i in range(3):
+                for j in range(3):
+                    currIdx=((a+i)%3)*3+(b+j)%3
+                    if self.board[i+a][b+j]!='_':
+                        continue
+                    if self.currPlayer:
+                        self.board[a+i][b+j] =self.maxPlayer
+                        if isMinimaxOffensive:
+                           curvalue=self.minimax(0,currIdx,self.currPlayer)
+                        else:
+                           curvalue=self.alphabeta(0,currIdx,alpha,beta,self.currPlayer)
+                           
+                        if curvalue > bestvalue:
+                            bestvalue=curvalue
+                            bestmove=(a+i,b+j)
+                            bestplayer=self.maxPlayer
+                        
+                            
+                    else:
+                        self.board[a+i][b+j] =self.minPlayer
+                        if isMinimaxOffensive:
+                            bestvalue=self.minimax(0,currIdx,self.currPlayer)
+                        else:
+                            bestvalue=self.alphabeta(0,currIdx,alpha,beta,self.currPlayer)
+                        if curvalue < bestvalue:
+                            bestvalue=curvalue
+                            bestmove=(a+i,b+j)
+                            bestplayer=self.minPlayer
+                    self.board[a+i][b+j] = '_'
+            self.board[bestmove[0]][bestmove[1]]=bestplayer
+            gameBoards.append(self.board)
+            expandedNodes.append(self.expandedNodes)
+            self.expandedNodes=0
+            bestMove.append(bestmove)
+            bestValue.append(bestvalue)
+            currIdx = (bestmove[0]%3)*3 + bestmove[1]%3
+            self.currPlayer = not self.currPlayer
+        winner = self.checkWinner()
+            
+    
+        
         return gameBoards, bestMove, expandedNodes, bestValue, winner
 
     def playGameYourAgent(self):
