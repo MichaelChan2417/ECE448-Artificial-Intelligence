@@ -74,6 +74,7 @@ class ultimateTicTacToe:
                 ot = "X"
 
             # starting with score 1
+            
             rowcond = (b[0][0] == t and b[0][1] == t and b[0][2] == t) or (
                         b[1][0] == t and b[1][1] == t and b[1][2] == t) or (
                             b[2][0] == t and b[2][1] == 0 and b[2][2] == t)
@@ -268,8 +269,10 @@ class ultimateTicTacToe:
         for loc_idx in range(len(self.globalIdx)):
             # the offset for global place and get the local board
             ioff, joff = self.globalIdx[loc_idx][0], self.globalIdx[loc_idx][1]
-            loc_board = self.board[ioff:ioff+3, joff:joff+3]
-
+            loc_board = [m[joff:joff+3] for m in self.board[ioff:ioff+3]]
+            # print(ioff,joff)
+            # print(self.board)
+            # print(loc_board)
             temp1, temp2, temp3 = score_find(loc_board, target, od)
             first_score += temp1
             second_score += temp2
@@ -358,9 +361,9 @@ class ultimateTicTacToe:
         if depth == self.maxDepth:
             return self.evaluatePredifined(not isMax)
         a,b=self.globalIdx[currBoardIdx]
-        bestValue=-self.winnerMaxUtility
+        
         if isMax:
-            
+            bestValue=self.winnerMinUtility
             for i in range(3):
                 for j in range(3):
                     if self.board[a+i][b+j] != '_':
@@ -375,6 +378,7 @@ class ultimateTicTacToe:
             # return bestValue
             
         else:
+            bestValue=self.winnerMaxUtility
             for i in range(3):
                 for j in range(3):
                     if self.board[a+i][b+j] != '_':
@@ -409,8 +413,9 @@ class ultimateTicTacToe:
         if depth == self.maxDepth:
             return self.evaluatePredifined(not isMax)
         a,b=self.globalIdx[currBoardIdx]
-        bestValue=-self.winnerMaxUtility
+        
         if isMax:
+            bestValue=self.winnerMinUtility
             for i in range(3):
                 for j in range(3):
                     if self.board[a+i][b+j] != '_':
@@ -419,6 +424,7 @@ class ultimateTicTacToe:
                     bestValue=max(bestValue,self.minimax(depth+1, 3*j+i, not isMax))
                     self.board[a+i][b+j] ='_'
         else:
+            bestValue=self.winnerMaxUtility
             for i in range(3):
                     for j in range(3):
                         if self.board[a+i][b+j] != '_':
@@ -452,6 +458,7 @@ class ultimateTicTacToe:
         bestMove = []
         bestValue = []
         gameBoards = []
+        expandedNodes=[]
         currIdx=self.startBoardIdx
         
         winner = 0
@@ -478,7 +485,8 @@ class ultimateTicTacToe:
                            curvalue=self.minimax(0,currIdx,self.currPlayer)
                         else:
                            curvalue=self.alphabeta(0,currIdx,alpha,beta,self.currPlayer)
-                           
+                        print("curvalue",curvalue)
+                        print("bestvalue",bestvalue)
                         if curvalue > bestvalue:
                             bestvalue=curvalue
                             bestmove=(a+i,b+j)
@@ -488,9 +496,11 @@ class ultimateTicTacToe:
                     else:
                         self.board[a+i][b+j] =self.minPlayer
                         if isMinimaxOffensive:
-                            bestvalue=self.minimax(0,currIdx,self.currPlayer)
+                            curvalue=self.minimax(0,currIdx,self.currPlayer)
                         else:
-                            bestvalue=self.alphabeta(0,currIdx,alpha,beta,self.currPlayer)
+                            curvalue=self.alphabeta(0,currIdx,alpha,beta,self.currPlayer)
+                        print("curvalue",curvalue)
+                        print("bestvalue",bestvalue)
                         if curvalue < bestvalue:
                             bestvalue=curvalue
                             bestmove=(a+i,b+j)
@@ -506,7 +516,7 @@ class ultimateTicTacToe:
             self.currPlayer = not self.currPlayer
         winner = self.checkWinner()
             
-    
+        print(gameBoards, bestMove, expandedNodes, bestValue, winner)
         
         return gameBoards, bestMove, expandedNodes, bestValue, winner
 
