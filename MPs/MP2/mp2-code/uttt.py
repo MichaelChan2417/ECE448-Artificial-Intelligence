@@ -358,7 +358,7 @@ class ultimateTicTacToe:
         """
         # YOUR CODE HERE
         self.expandedNodes+=1
-        if depth == self.maxDepth:
+        if (depth == self.maxDepth)or (self.checkMovesLeft() == 0) or(self.checkWinner() != 0):
             return self.evaluatePredifined(not isMax)
         a,b=self.globalIdx[currBoardIdx]
         
@@ -410,7 +410,7 @@ class ultimateTicTacToe:
         """
         self.expandedNodes+=1
         # YOUR CODE HERE
-        if depth == self.maxDepth:
+        if (depth == self.maxDepth)or (self.checkMovesLeft() == 0) or(self.checkWinner() != 0):
             return self.evaluatePredifined(not isMax)
         a,b=self.globalIdx[currBoardIdx]
         
@@ -466,9 +466,12 @@ class ultimateTicTacToe:
         self.currPlayer=maxFirst
         beta=self.winnerMinUtility
         alpha=self.winnerMaxUtility
+        if self.currPlayer:
+                bestvalue=self.winnerMinUtility
+        else:
+                bestvalue=self.winnerMaxUtility
         
-        
-        while(self.checkMovesLeft()==True)and (self.checkWinner()==0):
+        while(self.checkMovesLeft()==True) and (self.checkWinner()==0) and(self.currPlayer*bestvalue!=self.winnerMaxUtility):
             a,b=self.globalIdx[currIdx]
             if self.currPlayer:
                 bestvalue=self.winnerMinUtility
@@ -553,7 +556,7 @@ class ultimateTicTacToe:
 if __name__ == "__main__":
     uttt = ultimateTicTacToe()
     # feel free to write your own test code
-    gameBoards, bestMove, expandedNodes, bestValue, winner = uttt.playGamePredifinedAgent(True, False, False)
+    gameBoards, bestMove, expandedNodes, bestValue, winner = uttt.playGamePredifinedAgent(False, True, True)
     if winner == 1:
         print("The winner is maxPlayer!!!")
     elif winner == -1:
