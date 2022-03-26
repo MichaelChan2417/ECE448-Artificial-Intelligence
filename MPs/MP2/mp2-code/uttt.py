@@ -278,12 +278,12 @@ class ultimateTicTacToe:
             second_score += temp2
             third_score += temp3
 
-            if first_score>0:
-                score = temp1
-            elif second_score>0:
-                score = second_score
-            else:
-                score = third_score
+        if first_score>0:
+            score = first_score
+        elif second_score>0:
+            score = second_score
+        else:
+            score = third_score
 
         return score
 
@@ -654,9 +654,66 @@ class ultimateTicTacToe:
         """
         # YOUR CODE HERE
         bestMove = []
+        bestValue = []
         gameBoards = []
+        expandedNodes=[]
         winner = 0
-        return gameBoards, bestMove, winner
+        self.printGameBoard()
+        row=input("enter row")
+        col=input("enter col")
+        row=int(row)
+        col=int(col)
+
+        currIdx=(row%3)*3+col%3
+        self.board[row][col] = self.maxPlayer
+        self.currPlayer = not self.currPlayer
+        beta=self.winnerMaxUtility
+        alpha=self.winnerMinUtility
+      
+        
+        while(self.checkMovesLeft()==True) and (self.checkWinner()==0) :
+        
+            a,b=self.globalIdx[currIdx]
+            if not self.currPlayer:
+            
+                bestvalue=inf
+            for i in range(3):
+                for j in range(3):
+                    currIdx=i*3+j
+                    if self.board[i+a][b+j]!='_':
+                        continue
+                    if self.currPlayer:
+                        row=input("enter row")
+                        col=input("enter col")
+                        row=int(row)
+                        col=int(col)
+
+                        currIdx=(row%3)*3+col%3
+                        self.board[row][col] = self.maxPlayer
+                        bestmove=(row,col)
+                        
+                            
+                    else:
+                        self.board[a+i][b+j] =self.minPlayer
+                        
+                        curvalue=self.alphabeta(1,currIdx,alpha,beta,not self.currPlayer)
+                      
+                        if curvalue < bestvalue:
+                            bestvalue=curvalue
+                            bestmove=(a+i,b+j)
+                            bestplayer=self.minPlayer
+                    self.board[a+i][b+j] = '_'
+            self.printGameBoard()
+            self.board[bestmove[0]][bestmove[1]]=self.maxPlayer if  self.currPlayer else self.minPlayer
+            gameBoards.append(self.board)
+            expandedNodes.append(self.expandedNodes)
+            self.expandedNodes=0
+            bestMove.append(bestmove)
+            bestValue.append(bestvalue)
+            currIdx = (bestmove[0]%3)*3 + bestmove[1]%3
+            self.currPlayer = not self.currPlayer
+        winner = self.checkWinner()
+        return gameBoards, bestMove, expandedNodes, bestValue, winner
 
 
 if __name__ == "__main__":
